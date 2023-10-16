@@ -1,0 +1,85 @@
+---
+title: "Assignment 2 Ellis BA 64060"
+author: "Samantha Ellis"
+date: "2023-10-02"
+output: html_document
+---
+1. 
+
+library(class)
+library(caret)
+library(ISLR)
+summary(UniversalBank)
+#normailizing data
+norm_model<-preProcess(UniversalBank, method = c('range'))
+UniversalBank_normalize<-predict(norm_model,UniversalBank)
+#Prediciting
+UniversalBank_normalized<-UniversalBank_normalize[,-2]
+#Partitioning data 60% and 40%
+Index_Train<-createDataPartition(y=UniversalBank_normalized$Experience, p=0.6, list=FALSE)
+Train<-UniversalBank_normalized[Index_Train,]
+Test<-UniversalBank_normalized[-Index_Train,]
+
+Train_Predictors<-Train[,3:4]
+Test_Predictors<-Test[,3:4]
+
+Train_labels<-Train[,1]
+Test_labels<-Test[,1]
+#Train the knn model where knn=1
+Predicited_Test_labels<-knn3Train(Train_Predictors,Test_Predictors,cl=Train_labels[,1], k=1)
+
+The K-Nearst Neighbor is 0, so the loan was NOT approved.
+
+
+2. 
+The k that balances between overfitting and ignoring the predictor value for information is roughly 9.50. 
+
+knn3(UniversalBank_normalized, train=model, Test_labels, cl=Train_labels, k=i)
+
+
+3. 
+install.packages("gmodels")
+library(gmodels)
+
+CrossTable(x=Test_labels,y=Predicited_Test_labels, prop.chisq = FALSE)
+
+             Predicted Class 	
+Actual Class     1	    0
+1                63     131
+
+0                58     1748
+
+Class	  #cases	#Errors  %Error
+
+1        194      131      67.53
+
+0        1806      58       3.21
+
+
+
+
+
+
+4.  
+The customer was not approved the kNN was near zero.
+
+
+5. 
+This is not a useful comparison because there are no significant comparisons (confidence of 5%). The kNN value for this is roughly 6. The k value that balances overfitting and underfitting is roughly 9. 
+
+TrainIndex<- sample(rownames(UniversalBank_normalized), 0.5*dim(UniversalBank_normalized)[1])
+ValidIndex<- sample(setdiff(rownames(UniversalBank_normalized),TrainIndex), 0.3*dim(UniversalBank_normalized[1])
+TestIndex<-setdiff(rownames(UniversalBank_normalized),union(TrainIndex,ValidIndex))   
+train.df<-UniversalBank_normalized[TrainIndex, ]
+vaild.df<-UniversalBank_normalized[ValidIndex, ]
+Test.df<-UniversalBank_normalized[TestIndex, ]
+train.df[,-c(10)]<-predict(norm.values, train.df[, -c(10)])
+valid.df[,-c(10)]<-predict(norm.values, valid.df[, -c(10)])
+test.df[,-c(10)]<-predict(norm.values, test.df[, -c(10)])
+testknn<-knn3train(train=train.df[, -c(10)], test = test.df[, -c(10)], cl=train.df[, -c(10)], k=3, prob=TRUE)
+validknn<-knn3train(train=train.df[, -c(10)], test = valid.df[, -c(10)], cl=train.df[, -c(10)], k=3, prob=TRUE)
+trainknn<-knn3train(train=train.df[, -c(10)], test = train.df[, -c(10)], cl=train.df[, -c(10)], k=3, prob=TRUE)
+confusionMatrix(testknn, test.df[, 10])
+
+( I changed tackets in this last example because it made more sense to me after spending time learning from various sources.)
+
